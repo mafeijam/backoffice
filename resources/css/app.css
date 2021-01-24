@@ -1,0 +1,51 @@
+@import "quasar/dist/quasar.min.css";
+
+* {
+  font-family: 'Noto Sans TC';
+}
+
+.sticky-header-table {
+  height: calc(100vh - 82px);
+}
+
+.q-table__top,
+.q-table__bottom,
+.sticky-header-table thead tr:first-child th,
+.sticky-header-table2 thead tr:first-child th {
+    background-color: #FFFFFF
+}
+
+thead tr th {
+    position: sticky;
+    z-index: 100;
+}
+
+thead tr:first-child th {
+    top: 0;
+}
+
+.sticky-header-table thead tr:last-child th:last-child {
+    background-color: #FFFFFF;
+}
+.sticky-header-table td:last-child {
+    background-color: #FFFFFF;
+}
+.sticky-header-table th.sticky-col,
+.sticky-header-table td.sticky-col {
+    position: sticky;
+    right: 0;
+}
+
+::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+	background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar {
+	width: 12px;
+	background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(109.6deg,  rgba(78,112,157,1) 10%, rgba(137,164,199,1) 60%, rgba(205,213,224,1) 100%);
+}
