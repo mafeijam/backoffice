@@ -17,26 +17,26 @@
             v-model="client.data.name"
             label="Name"
             filled square readonly bottom-slots
-            :bg-color="getSafe(() => client.meta_data.before.name) ? 'pink-1' : ''"
+            :bg-color="$e(() => meta.name) ? 'pink-1' : ''"
           )
-            template(v-slot:hint v-if="getSafe(() => client.meta_data.before.name)")
-              .text-weight-medium.text-pink Before: {{ getSafe(() => client.meta_data.before.name) }}
+            template(v-slot:hint v-if="$e(() => meta.name)")
+              .text-weight-medium.text-pink Before: {{ $e(() => meta.name) }}
           q-input.col-4(
             v-model="client.data.email"
             label="Email Address"
             filled square readonly bottom-slots
-            :bg-color="getSafe(() => client.meta_data.before.email) ? 'pink-1' : ''"
+            :bg-color="$e(() => meta.email) ? 'pink-1' : ''"
           )
-            template(v-slot:hint v-if="getSafe(() => client.meta_data.before.email)")
-              .text-weight-medium.text-pink Before: {{ getSafe(() => client.meta_data.before.email) }}
+            template(v-slot:hint v-if="$e(() => meta.email)")
+              .text-weight-medium.text-pink Before: {{ $e(() => meta.email) }}
           q-input.col-4(
             v-model="client.data.phone"
             label="Phone Number"
             filled square readonly bottom-slots
-            :bg-color="getSafe(() => client.meta_data.before.phone) ? 'pink-1' : ''"
+            :bg-color="$e(() => meta.phone) ? 'pink-1' : ''"
           )
-            template(v-slot:hint v-if="getSafe(() => client.meta_data.before.phone)")
-              .text-weight-medium.text-pink Before: {{ getSafe(() => client.meta_data.before.phone) }}
+            template(v-slot:hint v-if="$e(() => meta.phone)")
+              .text-weight-medium.text-pink Before: {{ $e(() => meta.phone) }}
 
           .col-12
             q-separator
@@ -48,18 +48,27 @@
                 v-model="a.accountNo"
                 label="Account Numbber"
                 filled square readonly bottom-slots
-                :bg-color="getSafe(() => client.meta_data.before.accounts[i].accountNo) ? 'pink-1' : ''"
+                :bg-color="$e(() => meta.accounts[$a(a)].accountNo) ? 'pink-1' : ''"
               )
-                template(v-slot:hint v-if="getSafe(() => client.meta_data.before.accounts[i].accountNo)")
-                 .text-weight-medium.text-pink Before: {{ getSafe(() => client.meta_data.before.accounts[i].accountNo) }}
+                template(v-slot:hint v-if="$e(() => meta.accounts[$a(a)].accountNo)")
+                 .text-weight-medium.text-pink Before: {{ $e(() => meta.accounts[$a(a)].accountNo) }}
               q-select.col(v-model="a.type" label="Account Type" :options="['CASH', 'CUSTODIAN', 'MARGIN']" filled square readonly bottom-slots)
               date-pick.col(
                 v-model="a.openAt"
                 label="Open Date (YYYY-MM-DD)"
                 filled square readonly bottom-slots
-                :bg-color="getSafe(() => client.meta_data.before.accounts[i].openAt) ? 'pink-1' : ''"
-                :hint="getSafe(() => client.meta_data.before.accounts[i].openAt)"
+                :bg-color="$e(() => meta.accounts[$a(a)].openAt) ? 'pink-1' : ''"
+                :hint="$e(() => meta.accounts[$a(a)].openAt)"
               )
+              q-select.col(
+                v-model="a.status"
+                label="Status"
+                :options="['ACTIVE', 'INACTIVE']"
+                filled square readonly bottom-slots
+                :bg-color="$e(() => meta.accounts[$a(a)].status) ? 'pink-1' : ''"
+              )
+                template(v-slot:hint v-if="$e(() => meta.accounts[$a(a)].status)")
+                 .text-weight-medium.text-pink Before: {{ $e(() => meta.accounts[$a(a)].status) }}
 
           .col-12.text-right(v-if="type === 'approve'")
             .q-gutter-md
@@ -86,6 +95,9 @@ export default {
   computed: {
     isView() {
       return this.type === 'view'
+    },
+    meta() {
+      return this.client.meta_data.before
     }
   },
   methods: {
@@ -131,9 +143,12 @@ export default {
         })
       })
     },
-    getSafe(fn) {
+    $e(fn) {
       try { return fn() }
       catch (e) {}
+    },
+    $a(a) {
+      return `${a.accountNo}@${a.type}`
     }
   },
 }

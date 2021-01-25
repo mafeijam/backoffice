@@ -17,15 +17,15 @@ class ClientLog extends Model
     {
         $data = $client->status === ClientStatus::NEW
             ? [
-                'type' => 'new client approved',
+                'type' => 'new',
                 'details' => $client->data
             ]
             : [
-                'type' => 'client edited',
+                'type' => 'update',
                 'details' => collect($client->meta_data)->only('before', 'after')
             ];
 
-        ClientLog::create([
+        static::create([
             'client_uuid' => $client->uuid,
             'created_by' => $meta['created_by'],
             'approved_by' => $meta['approved_by'],

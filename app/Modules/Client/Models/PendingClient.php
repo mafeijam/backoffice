@@ -119,9 +119,14 @@ class PendingClient extends Model
     protected static function checkDiff($client, $data)
     {
         $arrayDeep = new ArrayDiffDeep;
+        $clientData = $client->toEdit();
 
-        $before = $arrayDeep->diff($data, $client->toEdit());
-        $after = $arrayDeep->diff($client->toEdit(), $data);
+        $keyBy = fn ($a) => $a['accountNo'].'@'.$a['type'];
+        $data['accounts'] = collect($data['accounts'])->keyBy($keyBy)->toArray();
+        $clientData['accounts'] = collect($clientData['accounts'])->keyBy($keyBy)->toArray();
+
+        $before = $arrayDeep->diff($data, $clientData);
+        $after = $arrayDeep->diff($clientData, $data);
 
         unset($after['uuid']);
         unset($before['uuid']);
