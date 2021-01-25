@@ -18,6 +18,21 @@
           .row.q-col-gutter-md
             .col-12
               .text-subtitle1.text-indigo Information
+            q-select.col-4(
+              v-model="form.clientType"
+              label="Client Type"
+              :options="['INDIVIDUAL', 'JOINT', 'CORPORATE']"
+              filled square bottom-slots
+            )
+
+            q-field.col-4(label="Non Face To Face" stack-label filled square bottom-slots)
+              template(v-slot:control)
+                q-option-group(v-model="form.nonFace" inline dense :options="options" size="xs")
+
+            q-field.col-4(label="US Tax Citizen" stack-label filled square bottom-slots)
+              template(v-slot:control)
+                q-option-group(v-model="form.usTax" inline dense :options="options" size="xs")
+
             q-input.col-4(
               v-model="form.name"
               label="Name"
@@ -33,7 +48,7 @@
               q-separator
             .col-12.flex.justify-between.items-center
               .text-subtitle1.text-indigo Accounts
-              q-btn(label="add accounts" flat dense size="12px" icon="o_add" color="blue" @click="addRowAccount")
+              q-btn(label="add accounts" flat dense size="sm" icon="o_add" color="blue" @click="addRowAccount")
 
             .col-12
               .row.q-col-gutter-x-md.items-center.q-mb-md(v-for="a, i in form.accounts")
@@ -46,7 +61,13 @@
                   @focus="form.clearErrors(`accounts.${i}.accountNo`)"
                   :readonly="a.readonly"
                 )
-                q-select.col(v-model="a.type" label="Account Type" :options="['CASH', 'CUSTODIAN', 'MARGIN']" filled square bottom-slots :readonly="a.readonly")
+                q-select.col(
+                  v-model="a.type"
+                  label="Account Type"
+                  :options="['CASH', 'CUSTODIAN', 'MARGIN']"
+                  filled square bottom-slots
+                  :readonly="a.readonly"
+                )
                 date-pick.col(v-model="a.openAt" label="Open Date (YYYY-MM-DD)" filled square bottom-slots)
                 q-select.col(v-model="a.status" label="Status" :options="['ACTIVE', 'INACTIVE']" filled square bottom-slots)
                 .col-shrink
@@ -69,6 +90,13 @@ export default {
   data() {
     return {
       form: this.$inertia.form(this.client),
+      options: [{
+        label: 'YES',
+        value: 'YES',
+      }, {
+        label: 'NO',
+        value: 'NO',
+      }]
     }
   },
   methods: {

@@ -9,11 +9,13 @@ mix.js('resources/js/app.js', 'public/js').vue()
   .options({
     processCssUrls: false
   })
+  .extract(['vue', 'vue-meta', 'quasar', '@inertiajs/inertia', '@inertiajs/inertia-vue'])
   .version()
   .sourceMaps()
   // .browserSync('192.168.50.68:9002')
 
 mix.webpackConfig({
+  stats: 'errors-only',
   output: {
     chunkFilename: 'js/[name].js?id=[chunkhash]',
   },

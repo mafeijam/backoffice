@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueMeta from 'vue-meta'
+import { Inertia } from '@inertiajs/inertia'
 import { App, plugin } from '@inertiajs/inertia-vue'
 
 import Quasar from 'quasar'
@@ -8,15 +9,13 @@ import iconSet from 'quasar/icon-set/material-icons-outlined.js'
 
 import Layout from '@/App'
 
-import DatePick from '@/Components/DatePick'
-
 Vue.use(VueMeta)
 Vue.use(plugin)
 
 Vue.use(Quasar, {
   config: {
     loadingBar: {
-      skipHijack: false,
+      skipHijack: true,
       color: 'pink',
       size: '3px',
       position: 'bottom'
@@ -25,7 +24,9 @@ Vue.use(Quasar, {
   iconSet
 })
 
-Vue.component('date-pick', DatePick)
+import AutoImport from './auto-import-components'
+
+AutoImport(Vue)
 
 const el = document.getElementById('app')
 
@@ -79,3 +80,20 @@ Vue.prototype.$onRequest = (props, component) => {
     }
   })
 }
+
+let timeout = null
+
+Inertia.on('start', () => {
+  timeout = setTimeout(() => vm.$q.loadingBar.start(), 300)
+})
+
+Inertia.on('finish', () => {
+  clearTimeout(timeout)
+  vm.$q.loadingBar.stop()
+})
+
+Inertia.on('progress', event => {
+  if (event.detail.progress.percentage) {
+    vm.$q.loadingBar.increment((event.detail.progress.percentage / 100) * 0.9)
+  }
+})

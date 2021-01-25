@@ -2,41 +2,56 @@
   .q-pa-md
     q-card.shadow-1
       q-card-section
-        .row.q-col-gutter-md
-          .col-12.text-right
-            q-chip(
-              :label="client.status"
-              :color="client.status === 'NEW' ? 'purple' : 'orange'"
-              text-color="white" square
-              v-if="!isView"
-            )
+        .flex.items-center.justify-between
+          .text-h6 {{ isView ? 'View Client' : 'Approve Client' }}
+          q-chip(
+            :label="client.status"
+            :color="client.status === 'ACTIVE' ? 'green' : 'red'"
+            text-color="white"
+            square size="md"
+            v-if="isView"
+          )
+          q-chip(
+            :label="client.status"
+            :color="client.status === 'NEW' ? 'purple' : 'orange'"
+            text-color="white"
+            square size="md"
+            v-else
+          )
 
-          .col-12
-            .text-subtitle1.text-indigo Information
-          q-input.col-4(
-            v-model="client.data.name"
-            label="Name"
-            filled square readonly bottom-slots
-            :bg-color="$e(() => meta.name) ? 'pink-1' : ''"
+      q-separator(inset)
+
+      q-card-section
+        .row.q-col-gutter-md
+          .col-12.text-subtitle1.text-indigo Information
+
+          diff-select.col-4(
+            v-model="client.data.clientType"
+            label="Client Type"
+            :options="['INDIVIDUAL', 'JOINT', 'CORPORATE']"
+            filled square bottom-slots
+            :diff="$e(() => meta.clientType)"
           )
-            template(v-slot:hint v-if="$e(() => meta.name)")
-              .text-weight-medium.text-pink Before: {{ $e(() => meta.name) }}
-          q-input.col-4(
-            v-model="client.data.email"
-            label="Email Address"
-            filled square readonly bottom-slots
-            :bg-color="$e(() => meta.email) ? 'pink-1' : ''"
+
+          diff-radio.col-4(
+            v-model="client.data.nonFace"
+            label="Non Face To Face"
+            :options="options"
+            :diff="$e(() => meta.nonFace)"
           )
-            template(v-slot:hint v-if="$e(() => meta.email)")
-              .text-weight-medium.text-pink Before: {{ $e(() => meta.email) }}
-          q-input.col-4(
-            v-model="client.data.phone"
-            label="Phone Number"
-            filled square readonly bottom-slots
-            :bg-color="$e(() => meta.phone) ? 'pink-1' : ''"
+
+          diff-radio.col-4(
+            v-model="client.data.usTax"
+            label="US Tax Citizen"
+            :options="options"
+            :diff="$e(() => meta.usTax)"
           )
-            template(v-slot:hint v-if="$e(() => meta.phone)")
-              .text-weight-medium.text-pink Before: {{ $e(() => meta.phone) }}
+
+          diff-input.col-4(v-model="client.data.name" label="Name" :diff="$e(() => meta.name)")
+
+          diff-input.col-4(v-model="client.data.email" label="Email Address" :diff="$e(() => meta.email)")
+
+          diff-input.col-4(v-model="client.data.phone" label="Phone Number" :diff="$e(() => meta.phone)")
 
           .col-12
             q-separator
@@ -44,31 +59,39 @@
             .text-subtitle1.text-indigo Accounts
           .col-12
             .row.q-col-gutter-x-md.items-center.q-mb-md(v-for="a, i in client.data.accounts")
-              q-input.col(
+              diff-input-array.col(
                 v-model="a.accountNo"
                 label="Account Numbber"
-                filled square readonly bottom-slots
-                :bg-color="$e(() => meta.accounts[$a(a)].accountNo) ? 'pink-1' : ''"
+                :diffKey="$e(() => meta.accounts[$k(a)])"
+                :diffVal="$e(() => meta.accounts[$k(a)].accountNo)"
               )
-                template(v-slot:hint v-if="$e(() => meta.accounts[$a(a)].accountNo)")
-                 .text-weight-medium.text-pink Before: {{ $e(() => meta.accounts[$a(a)].accountNo) }}
-              q-select.col(v-model="a.type" label="Account Type" :options="['CASH', 'CUSTODIAN', 'MARGIN']" filled square readonly bottom-slots)
+
+              diff-select-array.col(
+                v-model="a.type"
+                label="Account Type"
+                :options="['CASH', 'CUSTODIAN', 'MARGIN']"
+                filled square readonly bottom-slots
+                :diffKey="$e(() => meta.accounts[$k(a)])"
+                :diffVal="$e(() => meta.accounts[$k(a)].type)"
+              )
+
               date-pick.col(
                 v-model="a.openAt"
                 label="Open Date (YYYY-MM-DD)"
                 filled square readonly bottom-slots
-                :bg-color="$e(() => meta.accounts[$a(a)].openAt) ? 'pink-1' : ''"
-                :hint="$e(() => meta.accounts[$a(a)].openAt)"
+                :diffKey="$e(() => meta.accounts[$k(a)])"
+                :diffVal="$e(() => meta.accounts[$k(a)].openAt)"
+                disable
               )
-              q-select.col(
+
+              diff-select-array.col(
                 v-model="a.status"
                 label="Status"
                 :options="['ACTIVE', 'INACTIVE']"
                 filled square readonly bottom-slots
-                :bg-color="$e(() => meta.accounts[$a(a)].status) ? 'pink-1' : ''"
+                :diffKey="$e(() => meta.accounts[$k(a)])"
+                :diffVal="$e(() => meta.accounts[$k(a)].status)"
               )
-                template(v-slot:hint v-if="$e(() => meta.accounts[$a(a)].status)")
-                 .text-weight-medium.text-pink Before: {{ $e(() => meta.accounts[$a(a)].status) }}
 
           .col-12.text-right(v-if="type === 'approve'")
             .q-gutter-md
@@ -89,7 +112,14 @@ export default {
       loading: {
         approve: false,
         reject: false
-      }
+      },
+      options: [{
+        label: 'YES',
+        value: 'YES',
+      }, {
+        label: 'NO',
+        value: 'NO',
+      }]
     }
   },
   computed: {
@@ -147,7 +177,7 @@ export default {
       try { return fn() }
       catch (e) {}
     },
-    $a(a) {
+    $k(a) {
       return `${a.accountNo}@${a.type}`
     }
   },

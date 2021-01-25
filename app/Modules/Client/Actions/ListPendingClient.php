@@ -15,7 +15,7 @@ class ListPendingClient
 
     public function asController(Request $request)
     {
-        [$perPage, $sort, $desc] = $this->parseHeader($request);
+        [$perPage, $sort, $desc] = $this->parseHeader($request, 'submitted_at', 'desc');
 
         $map = [
             'client' => 'data->name',

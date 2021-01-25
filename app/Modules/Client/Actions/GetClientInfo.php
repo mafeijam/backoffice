@@ -13,9 +13,9 @@ class GetClientInfo
     public function asController(Client $client)
     {
         $type = 'view';
-        $client->load('accounts');
         $client = [
-            'data' => $client->toEdit()
+            'data' => $client->toEdit(),
+            'status' => $client->status
         ];
         return Inertia::render('Client/View', compact('client', 'type'));
     }

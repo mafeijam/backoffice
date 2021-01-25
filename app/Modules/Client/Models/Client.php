@@ -22,6 +22,9 @@ class Client extends Model
     public static function toForm()
     {
         return [
+            'clientType' => 'INDIVIDUAL',
+            'nonFace' => 'NO',
+            'usTax' => 'NO',
             'name' => null,
             'email' => null,
             'phone' => null,
@@ -40,16 +43,12 @@ class Client extends Model
     {
         $this->load('accounts');
 
-        return [
-            'uuid' => $this->uuid,
-            'name' => $this->data['name'],
-            'email' => $this->data['email'],
-            'phone' => $this->data['phone'],
+        return array_merge(static::toForm(), $this->data, [
             'accounts' => $this->accounts
                 ->sort(fn ($a, $b) => [$a['number'], $a['type']] <=> [$b['number'], $b['type']])
                 ->values()
                 ->map(fn ($a) => array_merge($a->data, ['readonly' => true]))
                 ->toArray()
-        ];
+        ]);
     }
 }

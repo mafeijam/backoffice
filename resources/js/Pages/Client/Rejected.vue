@@ -12,11 +12,23 @@
       :rows-per-page-options="[30, 50, 100, 0]"
       @request="onRequest"
     )
+      template(v-slot:top)
+        .full-width.flex.justify-between.q-py-xs
+          .text-h6 Rejected Client
+      template(v-slot:body-cell-status="props")
+        q-td(:props="props")
+          q-chip(
+            square
+            :color="props.row.status === 'NEW REJECTED' ? 'purple' : 'orange'"
+            text-color="white"
+            size="sm"
+          ) {{ props.row.status }}
+
       template(v-slot:body-cell-actions="props")
         q-td(:props="props")
           q-btn(
             label="edit"
-            flat dense size="12px"
+            flat dense size="sm"
             icon="o_edit"
             color="green"
             @click="$inertia.visit(`/client/correct/${props.row.uuid}`)"

@@ -12,15 +12,24 @@
       :rows-per-page-options="[30, 50, 100, 0]"
       @request="onRequest"
     )
+      template(v-slot:top)
+        .full-width.flex.justify-between.q-py-xs
+          .text-h6 Client List
       template(v-slot:body-cell-status="props")
         q-td(:props="props")
-          q-chip.text-uppercase(outline square dense :color="props.row.status === 'ACTIVE' ? 'green' : 'red'" size="sm") {{ props.row.status }}
+          q-chip(
+            square
+            :color="props.row.status === 'ACTIVE' ? 'green' : 'red'"
+            text-color="white"
+            size="sm"
+          ) {{ props.row.status }}
+
       template(v-slot:body-cell-actions="props")
         q-td(:props="props")
           .q-gutter-xs
             q-btn(
               :label="props.row.pstatus ? 'pending edit' : 'edit'"
-              flat dense size="12px"
+              flat dense size="sm"
               icon="o_edit"
               color="green"
               @click="$inertia.visit(`/client/edit/${props.row.client_uuid}`)"
@@ -29,7 +38,7 @@
 
             q-btn(
               label="view"
-              flat dense size="12px"
+              flat dense size="sm"
               icon="o_launch"
               color="blue"
               @click="$inertia.visit(`/client/view/${props.row.client_uuid}`)"

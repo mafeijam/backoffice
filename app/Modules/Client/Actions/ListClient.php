@@ -14,7 +14,7 @@ class ListClient
 
     public function asController(Request $request)
     {
-        [$perPage, $sort, $desc] = $this->parseHeader($request, 'client');
+        [$perPage, $sort, $desc] = $this->parseHeader($request, 'client', 'asc');
 
         $map = [
             'client' => 'clients.data->name',

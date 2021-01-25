@@ -53,7 +53,8 @@
               active-class="bg-indigo-1 text-indigo-10"
             )
               q-item-section Approve Client
-                q-badge(color="orange" floating style="right: 3px;" v-if="$page.props.count.approve") {{ $page.props.count.approve }}
+              q-item-section(side)
+                q-badge(color="orange" v-if="$page.props.count.approve") {{ $page.props.count.approve }}
             q-item(
               clickable v-ripple
               @click="$inertia.visit('/client/rejected')"
@@ -62,12 +63,32 @@
               active-class="bg-indigo-1 text-indigo-10"
             )
               q-item-section Rejected Client
-                q-badge(color="orange" floating style="right: 3px;" v-if="$page.props.count.reject") {{ $page.props.count.reject }}
+              q-item-section(side)
+                q-badge(color="orange" v-if="$page.props.count.reject") {{ $page.props.count.reject }}
 
         q-expansion-item(
           group="main"
           expand-separator
-          icon="o_compare_arrows"
+          icon="o_account_balance"
+          :header-class="$page.url.startsWith('/cash') ? 'text-indigo-10' : ''"
+          label="Cash Balance"
+        )
+          q-list(dense)
+            q-item(clickable v-ripple :inset-level="1")
+              q-item-section Transaction
+            q-item(clickable v-ripple :inset-level="1")
+              q-item-section Transfer
+            q-item(clickable v-ripple :inset-level="1")
+              q-item-section Currency Exchange
+            q-item(clickable v-ripple :inset-level="1")
+              q-item-section Cheque
+            q-item(clickable v-ripple :inset-level="1")
+              q-item-section Interest
+
+        q-expansion-item(
+          group="main"
+          expand-separator
+          icon="o_swap_horiz"
           :header-class="$page.url.startsWith('/trade') ? 'text-indigo-10' : ''"
           label="Trade"
         )
@@ -82,17 +103,40 @@
         q-expansion-item(
           group="main"
           expand-separator
+          icon="o_new_releases"
+          :header-class="$page.url.startsWith('/ipo') ? 'text-indigo-10' : ''"
+          label="IPO"
+        )
+          q-list(dense)
+            q-item(clickable v-ripple :inset-level="1")
+              q-item-section IPO
+            q-item(clickable v-ripple :inset-level="1")
+              q-item-section Placing
+
+        q-expansion-item(
+          group="main"
+          expand-separator
           icon="o_table_rows"
           :header-class="$page.url.startsWith('/setting') ? 'text-indigo-10' : ''"
           label="Master Table"
         )
           q-list(dense)
             q-item(clickable v-ripple :inset-level="1")
-              q-item-section Task
+              q-item-section AE List
             q-item(clickable v-ripple :inset-level="1")
-              q-item-section Client Trade
+              q-item-section Market
             q-item(clickable v-ripple :inset-level="1")
-              q-item-section Broker Trade
+              q-item-section Instrument
+            q-item(clickable v-ripple :inset-level="1")
+              q-item-section Closing Price
+            q-item(clickable v-ripple :inset-level="1")
+              q-item-section Depot List
+            q-item(clickable v-ripple :inset-level="1")
+              q-item-section Depot Finance
+            q-item(clickable v-ripple :inset-level="1")
+              q-item-section Haircut group
+            q-item(clickable v-ripple :inset-level="1")
+              q-item-section Exchange Rate
 
         q-expansion-item(
           group="main"
@@ -103,11 +147,7 @@
         )
           q-list(dense)
             q-item(clickable v-ripple :inset-level="1")
-              q-item-section Task
-            q-item(clickable v-ripple :inset-level="1")
-              q-item-section Client Trade
-            q-item(clickable v-ripple :inset-level="1")
-              q-item-section Broker Trade
+              q-item-section Calendar
 
         q-expansion-item(
           group="main"
@@ -118,7 +158,7 @@
         )
           q-list(dense)
             q-item(clickable v-ripple :inset-level="1")
-              q-item-section List
+              q-item-section User List
             q-item(clickable v-ripple :inset-level="1")
               q-item-section Role And Permission
 
@@ -144,8 +184,10 @@ export default {
             position: 'bottom-left',
             progress: true,
             html: true,
+            timeout: 10000,
+            multiLine: true,
             actions: [
-              { icon: 'o_close', color: 'pink', dense: true, round: true, size: 'sm' }
+              { label: 'dismiss', color: 'white', dense: true, size: 'sm', flat: true }
             ],
             message,
           })
@@ -163,8 +205,9 @@ export default {
             progress: true,
             html: true,
             timeout: 100000,
+            multiLine: true,
             actions: [
-              { icon: 'o_close', color: 'pink-1', dense: true, round: true, size: 'sm' }
+              { label: 'dismiss', color: 'white', dense: true, size: 'sm', flat: true }
             ],
             message,
           })
