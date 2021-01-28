@@ -12,11 +12,9 @@ class GetClientInfo
 
     public function asController(Client $client)
     {
-        $type = 'view';
-        $client = [
-            'data' => $client->toEdit(),
-            'status' => $client->status
-        ];
-        return Inertia::render('Client/View', compact('client', 'type'));
+        return Inertia::render('Client/View', [
+            'client' => $client->toData(),
+            'type' => 'view'
+        ]);
     }
 }

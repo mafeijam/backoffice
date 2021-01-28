@@ -14,7 +14,7 @@ class ShowRejectedClientForm
     public function asController(PendingClient $client)
     {
         return Inertia::render('Client/Edit', [
-            'client' => $client->toEdit(),
+            'client' => $client->toData(),
             'formSchema' => Client::toForm(),
             'reason' => $client->meta_data['reason']
         ]);

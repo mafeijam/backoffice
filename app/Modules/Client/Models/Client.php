@@ -39,16 +39,22 @@ class Client extends Model
         ];
     }
 
-    public function toEdit()
+    public function toData()
     {
         $this->load('accounts');
 
-        return array_merge(static::toForm(), $this->data, [
+        $data = array_merge(static::toForm(), $this->data, [
             'accounts' => $this->accounts
                 ->sort(fn ($a, $b) => [$a['number'], $a['type']] <=> [$b['number'], $b['type']])
                 ->values()
                 ->map(fn ($a) => array_merge($a->data, ['readonly' => true]))
                 ->toArray()
         ]);
+
+        return [
+            'uuid' => $this->uuid,
+            'status' => $this->status,
+            'data' => $data
+        ];
     }
 }

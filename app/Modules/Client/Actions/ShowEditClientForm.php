@@ -13,7 +13,7 @@ class ShowEditClientForm
     public function asController(Client $client)
     {
         return Inertia::render('Client/Edit', [
-            'client' => $client->toEdit(),
+            'client' => $client->toData(),
             'formSchema' => Client::toForm()
         ]);
     }

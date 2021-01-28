@@ -89,7 +89,7 @@ export default {
   props: ['client', 'formSchema', 'reason'],
   data() {
     return {
-      form: this.$inertia.form(this.client),
+      form: this.$inertia.form(this.client.data),
       options: [{
         label: 'YES',
         value: 'YES',

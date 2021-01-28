@@ -100,7 +100,7 @@ class PendingClient extends Model
         ]);
     }
 
-    public function toEdit()
+    public function toData()
     {
         $data = $this->data;
         [$old, $new] = collect($data['accounts'])->partition(fn ($a) => isset($a['readonly']));
@@ -112,14 +112,18 @@ class PendingClient extends Model
 
         $data['accounts'] = array_merge($old, $new);
 
-        $data['uuid'] = $this->uuid;
-        return $data;
+        return [
+            'uuid' => $this->uuid,
+            'status' => $this->status,
+            'data' => array_merge(Client::toForm(), $data),
+            'meta_data' => $this->meta_data
+        ];
     }
 
     protected static function checkDiff($client, $data)
     {
         $arrayDeep = new ArrayDiffDeep;
-        $clientData = $client->toEdit();
+        $clientData = $client->toData()['data'];
 
         $keyBy = fn ($a) => $a['accountNo'].'@'.$a['type'];
         $data['accounts'] = collect($data['accounts'])->keyBy($keyBy)->toArray();
