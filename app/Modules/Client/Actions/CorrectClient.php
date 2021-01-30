@@ -16,19 +16,6 @@ class CorrectClient
 
     public function asController(Request $request, PendingClient $client)
     {
-        $requestAccounts = $request->input('accounts.*.accountNo');
-
-        $messages = $this->checkRequestAccount($request);
-        if ($messages->count()) {
-            return back()->with('error', $messages->implode('<br>'));
-        }
-
-        [$isDuplicated, $duplicatedAccounts] = $this->checkDuplicate($requestAccounts, $client);
-
-        if ($isDuplicated) {
-            return back()->with('error', 'account number already taken: '.$duplicatedAccounts);
-        }
-
         DB::beginTransaction();
 
         try {

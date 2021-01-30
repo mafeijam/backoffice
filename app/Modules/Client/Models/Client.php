@@ -19,6 +19,16 @@ class Client extends Model
         return $this->hasMany(Account::class, 'client_uuid', 'uuid');
     }
 
+    public function logs()
+    {
+        return $this->hasMany(ClientLog::class, 'client_uuid', 'uuid');
+    }
+
+    public static function uuid(string $uuid)
+    {
+        return static::firstWhere('uuid', $uuid);
+    }
+
     public static function toForm()
     {
         return [

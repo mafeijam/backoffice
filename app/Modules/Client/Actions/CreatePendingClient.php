@@ -16,14 +16,6 @@ class CreatePendingClient
 
     public function asController(Request $request)
     {
-        $requestAccounts = $request->input('accounts.*.accountNo');
-
-        [$isDuplicated, $duplicatedAccounts] = $this->checkDuplicate($requestAccounts);
-
-        if ($isDuplicated) {
-            return back()->with('error', 'account number already taken: '.$duplicatedAccounts);
-        }
-
         DB::beginTransaction();
 
         try {
@@ -33,7 +25,7 @@ class CreatePendingClient
 
             DB::commit();
 
-            return redirect('client/list')->with('success', 'successfully created');
+            return redirect('client/list')->with('success', 'created');
         } catch (Exception $e) {
             throw $e;
         }

@@ -15,14 +15,25 @@ class PendingClient extends Model
         'meta_data' => 'json'
     ];
 
-    public static function forUuid(string $uuid)
+    public static function uuid(string $uuid)
     {
         return static::firstWhere('uuid', $uuid);
     }
 
+    public static function getAccountNumbers($client = null)
+    {
+        return static::select('data->accounts as accounts')
+            ->when($client, fn ($query, $client) => $query->where('uuid', '!=', $client->uuid))
+            ->get()
+            ->map(fn ($acc) => json_decode($acc['accounts'], true))
+            ->flatten(1)
+            ->filter(fn ($acc) => !isset($acc['readonly']))
+            ->pluck('accountNo');
+    }
+
     public static function add(string $uuid, array $data, array $meta)
     {
-        if ($client = Client::firstWhere('uuid', $uuid)) {
+        if ($client = Client::uuid($uuid)) {
             [$before, $after] = static::checkDiff($client, $data);
 
             usort($data['accounts'], static::usort());
@@ -47,15 +58,14 @@ class PendingClient extends Model
         ]);
     }
 
-    public static function approve(string $uuid, array $meta, self $pending)
+    public static function approve(string $uuid, array $meta, PendingClient $pending)
     {
-        $client = static::forUuid($uuid);
-        $accounts = collect($client->data['accounts']);
+        $accounts = collect($pending->data['accounts']);
 
         Client::updateOrCreate(
             ['uuid' => $uuid],
             [
-                'data' => collect($client->data)->except('accounts')->forget('uuid'),
+                'data' => collect($pending->data)->except('accounts'),
                 'meta_data' => $meta,
                 'status' => $accounts->every(fn ($val) => $val['status'] === ClientStatus::INACTIVE)
                     ? ClientStatus::INACTIVE
@@ -70,16 +80,16 @@ class PendingClient extends Model
             );
         });
 
-        $client->update([
+        $pending->update([
             'status' => $pending->status === ClientStatus::NEW ? ClientStatus::NEW_APPROVED : ClientStatus::UPDATE_APPROVED
         ]);
 
-        $client->delete();
+        $pending->delete();
     }
 
     public static function reject(string $uuid, array $meta)
     {
-        $client = static::forUuid($uuid);
+        $client = static::uuid($uuid);
         $client->update([
             'status' => $client->status === ClientStatus::NEW ? ClientStatus::NEW_REJECTED : ClientStatus::UPDATE_REJECTED,
             'meta_data' => array_merge($client->meta_data, $meta)
@@ -88,15 +98,15 @@ class PendingClient extends Model
 
     public static function correct(string $uuid, array $data, array $meta)
     {
-        $client = static::forUuid($uuid);
-        $original = Client::firstWhere('uuid', $uuid);
+        $pending = static::uuid($uuid) ;
+        $client = Client::uuid($uuid) ?? $pending;
 
-        [$before, $after] = static::checkDiff($original ?? $client, $data);
+        [$before, $after] = static::checkDiff($client, $data);
 
-        $client->update([
+        $pending->update([
             'data' => $data,
-            'status' => $client->status === ClientStatus::NEW_REJECTED ? ClientStatus::NEW : ClientStatus::UPDATE,
-            'meta_data' => array_merge($client->meta_data, $meta, compact('before', 'after'))
+            'status' => $pending->status === ClientStatus::NEW_REJECTED ? ClientStatus::NEW : ClientStatus::UPDATE,
+            'meta_data' => array_merge($pending->meta_data, $meta, compact('before', 'after'))
         ]);
     }
 
@@ -120,7 +130,7 @@ class PendingClient extends Model
         ];
     }
 
-    protected static function checkDiff($client, $data)
+    protected static function checkDiff($client, array $data)
     {
         $arrayDeep = new ArrayDiffDeep;
         $clientData = $client->toData()['data'];
@@ -131,9 +141,6 @@ class PendingClient extends Model
 
         $before = $arrayDeep->diff($data, $clientData);
         $after = $arrayDeep->diff($clientData, $data);
-
-        unset($after['uuid']);
-        unset($before['uuid']);
 
         return [$before, $after];
     }

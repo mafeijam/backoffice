@@ -19,6 +19,7 @@
         "spatie/laravel-event-sourcing": "^4.7"
     },
     "require-dev": {
+        "beyondcode/laravel-dump-server": "^1.7",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",

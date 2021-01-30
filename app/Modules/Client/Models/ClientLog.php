@@ -13,9 +13,9 @@ class ClientLog extends Model
         'data' => 'json'
     ];
 
-    public static function add(PendingClient $client, array $meta)
+    public static function add(array $meta, PendingClient $client)
     {
-        $data = $client->status === ClientStatus::NEW
+        $data = $client->status === ClientStatus::NEW_APPROVED
             ? [
                 'type' => 'new',
                 'details' => $client->data

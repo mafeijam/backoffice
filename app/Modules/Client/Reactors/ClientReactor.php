@@ -30,6 +30,6 @@ class ClientReactor extends Reactor
 
     public function onPendingClientApproved(PendingClientApproved $event)
     {
-        ClientLog::add($event->client, $event->meta);
+        ClientLog::add($event->meta, $event->client);
     }
 }

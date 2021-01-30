@@ -16,4 +16,11 @@ class Account extends Model
     {
         return $this->belongsTo(Client::class, 'client_uuid', 'uuid');
     }
+
+    public static function getAccountNumbers($requestAccounts, $client = null)
+    {
+        return static::whereIn('number', $requestAccounts)
+            ->when($client, fn ($query, $client) => $query->where('client_uuid', '!=', $client->uuid))
+            ->pluck('number');
+    }
 }
