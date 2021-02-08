@@ -51,8 +51,6 @@ class Client extends Model
 
     public function toData()
     {
-        $this->load('accounts');
-
         $data = array_merge(static::toForm(), $this->data, [
             'accounts' => $this->accounts
                 ->sort(fn ($a, $b) => [$a['number'], $a['type']] <=> [$b['number'], $b['type']])

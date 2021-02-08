@@ -5,7 +5,7 @@
     filled square readonly bottom-slots
     :bg-color="diff === null ? 'teal-1' : diff ? 'pink-1' : ''"
   )
-    template(v-slot:hint v-if="diff")
+    template(#hint v-if="diff")
       .q-gutter-sm.flex
         .text-grey BEFORE:
         .text-weight-medium.text-pink {{ diff }}

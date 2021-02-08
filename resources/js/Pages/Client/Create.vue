@@ -17,11 +17,11 @@
             )
 
             q-field.col-4(label="Non Face To Face" stack-label filled square bottom-slots)
-              template(v-slot:control)
+              template(#control)
                 q-option-group(v-model="form.nonFace" inline dense :options="options" size="xs")
 
             q-field.col-4(label="US Tax Citizen" stack-label filled square bottom-slots)
-              template(v-slot:control)
+              template(#control)
                 q-option-group(v-model="form.usTax" inline dense :options="options" size="xs")
 
             q-input.col-4(

@@ -12,10 +12,10 @@
       :rows-per-page-options="[30, 50, 100, 0]"
       @request="onRequest"
     )
-      template(v-slot:top)
+      template(#top)
         .full-width.flex.justify-between.q-py-xs
           .text-h6 Client List
-      template(v-slot:body-cell-status="props")
+      template(#body-cell-status="props")
         q-td(:props="props")
           q-chip(
             square
@@ -24,7 +24,7 @@
             size="sm"
           ) {{ props.row.status }}
 
-      template(v-slot:body-cell-actions="props")
+      template(#body-cell-actions="props")
         q-td(:props="props")
           .q-gutter-xs
             q-btn(
@@ -56,7 +56,13 @@ export default {
   data() {
     return {
       columns: [
-        { name: 'client', align: 'left', label: 'Client', field: 'cname', sortable: true },
+        {
+          name: 'client',
+          align: 'left',
+          label: 'Client',
+          field: 'cname',
+          sortable: true
+        },
         {
           name: 'account',
           align: 'left',
@@ -88,11 +94,6 @@ export default {
         rowsNumber: this.data.total
       }
     }
-  },
-  mounted() {
-    this.pagination.page = this.data.current_page
-    this.pagination.rowsPerPage = this.data.per_page
-    this.pagination.rowsNumber = this.data.total
   },
   methods: {
     onRequest(props) {

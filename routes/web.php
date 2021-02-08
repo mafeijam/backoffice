@@ -12,6 +12,10 @@ use App\Modules\Client\Actions\ListRejectedClient;
 use App\Modules\Client\Actions\ShowCreateClientForm;
 use App\Modules\Client\Actions\ShowEditClientForm;
 use App\Modules\Client\Actions\ShowRejectedClientForm;
+use App\Modules\Client\Middleware\CheckAccounts;
+use App\Modules\Client\Middleware\CheckDirty;
+use App\Modules\MasterTable\Actions\ListAE;
+use App\Modules\MasterTable\Actions\ShowCreateAeForm;
 use Illuminate\Support\Facades\Route;
 
 Auth::loginUsingId(1);
@@ -29,10 +33,15 @@ Route::prefix('/client')->group(function () {
     Route::get('/edit/{client:uuid}', ShowEditClientForm::class);
     Route::get('/correct/{client:uuid}', ShowRejectedClientForm::class);
 
-    Route::post('/create', CreatePendingClient::class);
-    Route::put('/edit/{client:uuid}', EditClient::class);
-    Route::put('/correct/{client:uuid}', CorrectClient::class);
+    Route::post('/create', CreatePendingClient::class)->middleware(CheckAccounts::class);
+    Route::put('/edit/{client:uuid}', EditClient::class)->middleware(CheckAccounts::class, CheckDirty::class);
+    Route::put('/correct/{client:uuid}', CorrectClient::class)->middleware(CheckAccounts::class, CheckDirty::class);
     Route::patch('/{client:uuid}', ApproveOrRejectPendingClient::class);
+});
+
+Route::prefix('master_table')->group(function () {
+    Route::get('/ae/list', ListAE::class);
+    Route::get('/ae/create', ShowCreateAeForm::class);
 });
 
 Route::inertia('/login', 'Login');

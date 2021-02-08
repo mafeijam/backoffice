@@ -117,11 +117,18 @@
           group="main"
           expand-separator
           icon="o_table_rows"
-          :header-class="$page.url.startsWith('/setting') ? 'text-indigo-10' : ''"
+          :header-class="$page.url.startsWith('/master_table') ? 'text-indigo-10' : ''"
           label="Master Table"
+          :default-opened="$page.url.startsWith('/master_table')"
         )
           q-list(dense)
-            q-item(clickable v-ripple :inset-level="1")
+            q-item(
+              clickable v-ripple
+              @click="$inertia.visit('/master_table/ae/list')"
+              :active="$page.url.startsWith('/master_table/ae')"
+              :inset-level="1"
+              active-class="bg-indigo-1 text-indigo-10"
+            )
               q-item-section AE List
             q-item(clickable v-ripple :inset-level="1")
               q-item-section Market

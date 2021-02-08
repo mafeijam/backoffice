@@ -2,16 +2,10 @@
 
 namespace App\Modules\Client;
 
-use App\Modules\Client\Middleware\CheckAccounts;
 use Lorisleiva\Actions\ActionRequest;
 
 trait ClientRule
 {
-    public function getControllerMiddleware()
-    {
-        return [CheckAccounts::class];
-    }
-
     public function rules()
     {
         return [
